@@ -110,6 +110,6 @@ best2
 best_team = best2.head(1)
 best_team
 
---- from this, we have WAS as our best NBA team in 2017
+--- from this, we have WAS with average criteria 6.896% as our best NBA team in 2017
 
 --- Thank You ---
