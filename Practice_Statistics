@@ -1,7 +1,115 @@
------ Statistics Practice Test -----
------ Cut Hasna Aushaf -----
-
-#import data 
+--- Practice Case Statistics ---
+--- Cut Hasna A ---
 
 
-Data pre-processing
+# Data Preprocessing
+# Import data 
+
+import numpy as np
+import pandas as pd
+df = pd.read_csv('https://raw.githubusercontent.com/Syukrondzeko/Fellowship/main/Seasons_Stats.csv')
+df
+
+# Figure out column values
+df.columns.values
+
+# Filter Year 2017 datas only
+df = pd.read_csv('https://raw.githubusercontent.com/Syukrondzeko/Fellowship/main/Seasons_Stats.csv')
+df = df[df["Year"] == 2017]
+df
+
+# Remove Unnamed:0 column, irrelevant and not adding value to data
+df.drop("Unnamed: 0", axis = 1, inplace = True)
+df
+
+# Detect duplicate values
+df_duplicate = df[df.duplicated(['Player'])]
+df_duplicate
+
+# Delete duplicate values in 'Player' column
+df = df.drop_duplicates(subset=['Player'])
+df = df.reset_index(drop=True)
+df
+
+# Figure out isnull columns
+df.isnull().sum()
+
+# Drop 'blanl' and 'blank2' due to all isnull 
+df.drop(['blanl', 'blank2'], axis = 1, inplace = True)
+
+--- Question 1: Who is the youngest and oldest player in the NBA in 2017 for each team (Tm) ?
+
+# To find the oldest player in NBA 2017 
+df[['Player','Age','Tm']].groupby(['Tm']).max()
+
+# To find the youngest player in NBA 2017
+df[['Player','Age','Tm']].groupby(['Tm']).min()
+
+--- Question 2: Which player has the most minutes played (MP) in each position (Pos)?
+
+# We select relevant columns (Player, MP, Pos), group by Pos and figure out max value 
+df[['Player', 'Pos', 'MP']].groupby(['Pos']).max()
+
+--- Question 3: Which team has the highest average total rebound percentage (TRB%), assist percentage (AST%), steal percentage (STL%), and block percentage (BLK%)? 
+
+# First we select relevant columns 
+df[['Tm', 'TRB%', 'AST%', 'STL%', 'BLK%']]
+
+# Figure out the mean from each team, group by 'Tm'
+df_avg = df[['Tm', 'TRB%', 'AST%', 'STL%', 'BLK%']].groupby(['Tm']).mean()
+df_avg
+
+# To find the highest in TRB%
+df_trb = df[['Tm', 'TRB%']].groupby(['Tm']).mean().sort_values(by = 'TRB%', ascending = False)
+df_hightrb = df_trb.head(1)
+df_hightrb
+
+# To find the highest in AST%
+df_ast = df[['Tm', 'AST%']].groupby(['Tm']).mean().sort_values(by = 'AST%', ascending = False)
+df_highast = df_ast.head(1)
+df_highast 
+
+# To find the highest STL%
+df_stl = df[['Tm', 'STL%']].groupby(['Tm']).mean().sort_values(by = 'STL%', ascending = False)
+df_highstl = df_stl.head(1)
+df_highstl 
+
+# To find the highest BLK%
+df_blk = df[['Tm', 'BLK%']].groupby(['Tm']).mean().sort_values(by = 'BLK%', ascending = False)
+df_highblk = df_blk.head(1)
+df_highblk
+
+--- Question 4: Who is the best player in your opinion based on his record stats?
+# In this section i use all percentage datas of player in order to have a right representative from their attempt (i.e. win over all attempt)
+
+# Extract the best criteria 
+best_crit = df[['Player','TS%', 'ORB%', 'DRB%', 'TRB%', 'AST%', 'STL%', 'BLK%', 'TOV%', 'USG%','FG%', '3P%', '2P%', 'eFG%', 'FT%']]
+best_crit
+
+# Add new column, average from best criteria percentage
+b1 = best_crit.loc[:, "TS%":"FT%"]
+df['Average Criteria'] = b1.mean(axis = 1)
+df
+
+# Display only player and average criteria from the best 
+df[['Player','Average Criteria']].sort_values(by = 'Average Criteria', ascending = False).head(1)
+
+--- from this, we have Danuel House with avg best criteria 22.342% as the best player 
+
+--- Question 5: Which team has the best average stat record of their players?
+
+# Like the best player, still have same best criteria to have a representation from overall attempt / score +with addition 'Tm' as team
+best_crit = df[['Tm', 'Player','TS%', 'ORB%', 'DRB%', 'TRB%', 'AST%', 'STL%', 'BLK%', 'TOV%', 'USG%','FG%', '3P%', '2P%', 'eFG%', 'FT%']]
+best_crit
+
+# We select only relevant column'Tm', 'Player', 'Average Criteria' and average them 
+best2 = df[['Tm', 'Player', 'Average Criteria']].groupby(['Tm']).mean().sort_values(by = 'Average Criteria', ascending = False)
+best2
+
+# Then display only the best team with head
+best_team = best2.head(1)
+best_team
+
+--- from this, we have WAS as our best NBA team in 2017
+
+--- Thank You ---
